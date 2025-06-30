@@ -14,6 +14,7 @@ def cm_energy_to_lab(cm_energy: NDArray[np.float64], proj_mass: float, target_ma
     return cm_energy * factor
 
 def eject_lab_energy(lab_energy: NDArray[np.float64], lab_angle: float, proj_mass: float, target_mass: float, eject_mass: float, recoil_mass: float, recoil_ex: float) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    lab_angle = np.deg2rad(lab_angle)
     q_value: float = proj_mass + target_mass - eject_mass - recoil_mass - recoil_ex
 
     enum1: NDArray[np.float64] = np.sqrt( (proj_mass * eject_mass) * lab_energy) * np.cos(lab_angle)
@@ -24,6 +25,15 @@ def eject_lab_energy(lab_energy: NDArray[np.float64], lab_angle: float, proj_mas
     result_minus: NDArray[np.float64] = np.power((enum1 - enum2) / (recoil_mass + eject_mass), 2)
     
     return (result_plus, result_minus)
+
+def gamma_energy(lab_energy: NDArray[np.float64], proj_mass: float, target_mass: float, recoil_mass: float, recoil_ex: float) -> NDArray[np.float64]:
+    q_value: float = proj_mass + target_mass - recoil_mass - recoil_ex
+
+    momentum2: NDArray[np.float64] = (2 * proj_mass ) * lab_energy
+
+    recoil_energy: NDArray[np.float64] = momentum2 / (2 * (recoil_mass + recoil_ex))
+    
+    return lab_energy + q_value - recoil_energy
 
 def main():
     nist_isotope_mass: NIST_isotope_mass = NIST_isotope_mass("data/nist_isotope_mass.txt")
@@ -56,6 +66,31 @@ def main():
     print(f"79Br(n,a)76As Q-value: {Br79_n_a_As76_q_value : .3f} keV")
     print(f"81Br(n,a)78As Q-value: {Br81_n_a_As78_q_value : .3f} keV")
 
+    lab_energy: NDArray[np.float64] = np.linspace(4e3, 9e3, 1000, dtype=np.float64)
+
+    C12_a_g_O16_gs: NDArray[np.float64] = gamma_energy(lab_energy, He4_mass, C12_mass, O16_mass, 0)
+    C12_a_g_O16_6130: NDArray[np.float64] = gamma_energy(lab_energy, He4_mass, C12_mass, O16_mass, 6130)
+    C12_a_g_O16_6917: NDArray[np.float64] = gamma_energy(lab_energy, He4_mass, C12_mass, O16_mass, 6917)
+    C12_a_g_O16_7117: NDArray[np.float64] = gamma_energy(lab_energy, He4_mass, C12_mass, O16_mass, 7117)
+
+    plt.rc("font", family=["Helvetica", "Arial"])
+    plt.rc("text", usetex=True)
+    plt.rc("axes", labelsize=18, titlesize=18)
+    plt.rc("xtick", labelsize=18, top=True, direction="in")
+    plt.rc("ytick", labelsize=18, right=True, direction="in")
+    plt.rc("legend", fontsize=18)
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{12}$C$(\\alpha,\\gamma)^{16}$O (labels for final state)")
+    ax.set_ylabel("$E_{\\gamma}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy, C12_a_g_O16_gs, linestyle="-", color="black", label="$^{16}$O$(g.s.)$")
+    ax.plot(lab_energy, C12_a_g_O16_6130, linestyle="--", color="red", label="$^{16}$O$(6130)$")
+    ax.plot(lab_energy, C12_a_g_O16_6917, linestyle="-.", color="blue", label="$^{16}$O$(6917)$")
+    ax.plot(lab_energy, C12_a_g_O16_7117, linestyle=":", color="green", label="$^{16}$O$(7117)$")
+    ax.legend()
+
+    fig.savefig("figs/C12_a_g_O16.png", bbox_inches="tight")
 
     return
 
