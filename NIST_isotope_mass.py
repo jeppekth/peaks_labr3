@@ -28,10 +28,10 @@ class NIST_isotope_mass:
 
                 self._isotope_dict[symbol]["isotopes mass"][A] = mass
     
-    def get_isotope_mass(self, symbol, A):
+    def get_isotope_mass(self, symbol: str, A: int) -> float:
         return self._isotope_dict[symbol]["isotopes mass"][A]
     
-    def get_Z(self, symbol):
+    def get_Z(self, symbol: str) -> int:
         return self._isotope_dict[symbol]["Z"]
 
 
