@@ -34,13 +34,28 @@ def main():
     C12_mass: float = nist_isotope_mass.get_isotope_mass("C", 12)
     C13_mass: float = nist_isotope_mass.get_isotope_mass("C", 13)
     O16_mass: float = nist_isotope_mass.get_isotope_mass("O", 16)
+    As76_mass: float = nist_isotope_mass.get_isotope_mass("As", 76)
+    As78_mass: float = nist_isotope_mass.get_isotope_mass("As", 78)
+    Se79_mass: float = nist_isotope_mass.get_isotope_mass("Se", 79)
+    Se81_mass: float = nist_isotope_mass.get_isotope_mass("Se", 81)
+    Br79_mass: float = nist_isotope_mass.get_isotope_mass("Br", 79)
+    Br81_mass: float = nist_isotope_mass.get_isotope_mass("Br", 81)
 
     C12_a_g_O16_q_value: float = C12_mass + He4_mass - O16_mass
     C13_a_n_O16_q_value: float = C13_mass + He4_mass - neutron_mass - O16_mass
+    Br79_n_p_Se79_q_value: float = Br79_mass + neutron_mass - H1_mass - Se79_mass
+    Br81_n_p_Se81_q_value: float = Br81_mass + neutron_mass - H1_mass - Se81_mass
+    Br79_n_a_As76_q_value: float = Br79_mass + neutron_mass - He4_mass - As76_mass
+    Br81_n_a_As78_q_value: float = Br81_mass + neutron_mass - He4_mass - As78_mass
 
-    print(f"12C(a,g)16O Q-value: {C12_a_g_O16_q_value : .3f}")
-    print(f"13C(a,n)16O Q-value: {C13_a_n_O16_q_value : .3f}")
-    
+
+    print(f"12C(a,g)16O Q-value: {C12_a_g_O16_q_value : .3f} keV")
+    print(f"13C(a,n)16O Q-value: {C13_a_n_O16_q_value : .3f} keV")
+    print(f"79Br(n,p)79Se Q-value: {Br79_n_p_Se79_q_value : .3f} keV")
+    print(f"81Br(n,p)81Se Q-value {Br81_n_p_Se81_q_value : .3f} keV")
+    print(f"79Br(n,a)76As Q-value: {Br79_n_a_As76_q_value : .3f} keV")
+    print(f"81Br(n,a)78As Q-value: {Br81_n_a_As78_q_value : .3f} keV")
+
 
     return
 
