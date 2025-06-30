@@ -6,6 +6,8 @@ class NIST_isotope_mass:
 
             symbol = ""
 
+            relative_atomic_mass_to_keV: float = 1.11779292e7 / 12.
+
             for l in f:
                 if l.isspace() or l == "":
                     continue
@@ -25,6 +27,7 @@ class NIST_isotope_mass:
                 A = int(l[8:11])
                 mass_string_end = l.find("(")
                 mass = float(l[13:mass_string_end])
+                mass = mass * relative_atomic_mass_to_keV
 
                 self._isotope_dict[symbol]["isotopes mass"][A] = mass
     
