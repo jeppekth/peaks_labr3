@@ -18,7 +18,7 @@ def eject_lab_energy(lab_energy: NDArray[np.float64], lab_angle: float, proj_mas
     q_value: float = proj_mass + target_mass - eject_mass - recoil_mass - recoil_ex
 
     enum1: NDArray[np.float64] = np.sqrt( (proj_mass * eject_mass) * lab_energy) * np.cos(lab_angle)
-    enum2: NDArray[np.float64] = np.sqrt( (proj_mass *eject_mass * np.power(np.cos(lab_angle), 2)) * lab_energy \
+    enum2: NDArray[np.float64] = np.sqrt( (proj_mass * eject_mass * np.power(np.cos(lab_angle), 2)) * lab_energy \
                                          + (recoil_mass + eject_mass) * (recoil_mass * q_value + (recoil_mass - proj_mass) * lab_energy) )
     
     result_plus: NDArray[np.float64] = np.power((enum1 + enum2) / (recoil_mass + eject_mass), 2)
@@ -34,6 +34,28 @@ def gamma_energy(lab_energy: NDArray[np.float64], proj_mass: float, target_mass:
     recoil_energy: NDArray[np.float64] = momentum2 / (2 * (recoil_mass + recoil_ex))
     
     return lab_energy + q_value - recoil_energy
+
+def has_enough_energy(lab_energy: NDArray[np.float64], lab_angle: float, proj_mass: float, target_mass: float, eject_mass: float, recoil_mass: float, recoil_ex: float) -> list[bool]:
+    lab_angle = np.deg2rad(lab_angle)
+    q_value: float = proj_mass + target_mass - eject_mass - recoil_mass - recoil_ex
+
+    result: list[bool] = []
+    
+    for i in range(len(lab_energy)):
+        if q_value + lab_energy[i] <= 0:
+            result.append(False)
+            continue
+
+        enum2: float = (proj_mass * eject_mass * np.power(np.cos(lab_angle), 2)) * lab_energy[i] \
+                                         + (recoil_mass + eject_mass) * (recoil_mass * q_value + (recoil_mass - proj_mass) * lab_energy[i])
+        
+        if enum2 < 0:
+            result.append(False)
+            continue
+
+        result.append(True)
+
+    return  result
 
 def main():
     nist_isotope_mass: NIST_isotope_mass = NIST_isotope_mass("data/nist_isotope_mass.txt")
@@ -92,6 +114,10 @@ def main():
 
     fig.savefig("figs/C12_a_g_O16.png", bbox_inches="tight", dpi=400)
 
+    ################
+    ################
+    # C13_a_n_O16_gs
+
     C13_a_n_O16_gs_45deg: NDArray[np.float64] = eject_lab_energy(lab_energy, 45, He4_mass, C13_mass, neutron_mass, O16_mass, 0)[0]
     C13_a_n_O16_gs_90deg: NDArray[np.float64] = eject_lab_energy(lab_energy, 90, He4_mass, C13_mass, neutron_mass, O16_mass, 0)[0]
     C13_a_n_O16_gs_135deg: NDArray[np.float64] = eject_lab_energy(lab_energy, 135, He4_mass, C13_mass, neutron_mass, O16_mass, 0)[0]
@@ -105,7 +131,7 @@ def main():
     ax.plot(lab_energy, C13_a_n_O16_gs_135deg, linestyle="-.", color="blue", label="$\\theta_\\mathrm{LAB}=135\\,$deg")
     ax.legend()
 
-    fig.savefig("figs/C13_a_g_O16.png", bbox_inches="tight", dpi=400)
+    fig.savefig("figs/C13_a_g_O16_gs.png", bbox_inches="tight", dpi=400)
 
     Br79_n_p_Se79_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_45deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
     Br79_n_p_Se79_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_90deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
@@ -120,7 +146,7 @@ def main():
     ax.plot(lab_energy, Br79_n_p_Se79_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
     ax.legend()
 
-    fig.savefig("figs/C13_a_n_O16_Br79_n_p_Se79.png", bbox_inches="tight", dpi=400)
+    fig.savefig("figs/C13_a_n_O16_gs_Br79_n_p_Se79.png", bbox_inches="tight", dpi=400)
 
     Br81_n_p_Se81_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_45deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
     Br81_n_p_Se81_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_90deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
@@ -135,8 +161,238 @@ def main():
     ax.plot(lab_energy, Br81_n_p_Se81_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
     ax.legend()
 
-    fig.savefig("figs/C13_a_n_O16_Br81_n_p_Se81.png", bbox_inches="tight", dpi=400)
+    fig.savefig("figs/C13_a_n_O16_gs_Br81_n_p_Se81.png", bbox_inches="tight", dpi=400)
     
+
+    Br79_n_a_As76_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_45deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+    Br79_n_a_As76_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_90deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+    Br79_n_a_As76_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_135deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(\\mathrm{g.s.})$ to $^{79}$Br$(n,a)^{76}$As$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
+    ax.set_ylabel("$E_{\\alpha}$ [keV]")
+    ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy, Br79_n_a_As76_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy, Br79_n_a_As76_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy, Br79_n_a_As76_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_gs_Br79_n_a_As76.png", bbox_inches="tight", dpi=400)
+
+    Br81_n_p_As78_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_45deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_p_As78_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_90deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_p_As78_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_135deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(\\mathrm{g.s.})$ to $^{81}$Br$(n,a)^{78}$As$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
+    ax.set_ylabel("$E_{\\alpha}$ [keV]")
+    ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy, Br81_n_p_As78_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy, Br81_n_p_As78_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy, Br81_n_p_As78_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_gs_Br81_n_p_As78.png", bbox_inches="tight", dpi=400)    
+
+
+    ################
+    ################
+    # C13_a_n_O16_6130
+
+    C13_a_n_O16_6130_45deg_valid: list[bool] = has_enough_energy(lab_energy, 45, He4_mass, C13_mass, neutron_mass, O16_mass, 6130)
+    C13_a_n_O16_6130_90deg_valid: list[bool] = has_enough_energy(lab_energy, 90, He4_mass, C13_mass, neutron_mass, O16_mass, 6130)
+    C13_a_n_O16_6130_135deg_valid: list[bool] = has_enough_energy(lab_energy, 135, He4_mass, C13_mass, neutron_mass, O16_mass, 6130)
+
+    C13_a_n_O16_6130_45deg: NDArray[np.float64] = eject_lab_energy(lab_energy[C13_a_n_O16_6130_45deg_valid], 45, He4_mass, C13_mass, neutron_mass, O16_mass, 6130)[0]
+    C13_a_n_O16_6130_90deg: NDArray[np.float64] = eject_lab_energy(lab_energy[C13_a_n_O16_6130_90deg_valid], 90, He4_mass, C13_mass, neutron_mass, O16_mass, 6130)[0]
+    C13_a_n_O16_6130_135deg: NDArray[np.float64] = eject_lab_energy(lab_energy[C13_a_n_O16_6130_135deg_valid], 135, He4_mass, C13_mass, neutron_mass, O16_mass, 6130)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6130)$")
+    ax.set_ylabel("$E_{n}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6130_45deg_valid], C13_a_n_O16_6130_45deg, linestyle="-", color="black", label="$\\theta_\\mathrm{LAB}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_90deg_valid], C13_a_n_O16_6130_90deg, linestyle="--", color="red", label="$\\theta_\\mathrm{LAB}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_135deg_valid], C13_a_n_O16_6130_135deg, linestyle="-.", color="blue", label="$\\theta_\\mathrm{LAB}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_g_O16_6130.png", bbox_inches="tight", dpi=400)
+
+    Br79_n_p_Se79_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_45deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)
+    Br79_n_p_Se79_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_90deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)
+    Br79_n_p_Se79_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_135deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)
+
+    Br79_n_p_Se79_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_45deg[Br79_n_p_Se79_gs_45deg_valid], 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
+    Br79_n_p_Se79_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_90deg[Br79_n_p_Se79_gs_90deg_valid], 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
+    Br79_n_p_Se79_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_135deg[Br79_n_p_Se79_gs_135deg_valid], 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6130)$ to $^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $\\theta_p=0\\,$deg")
+    ax.set_ylabel("$E_{p}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br79_n_p_Se79_gs_45deg_valid], Br79_n_p_Se79_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br79_n_p_Se79_gs_90deg_valid], Br79_n_p_Se79_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br79_n_p_Se79_gs_135deg_valid], Br79_n_p_Se79_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_6130_Br79_n_p_Se79.png", bbox_inches="tight", dpi=400)
+
+    Br81_n_p_Se81_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_45deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)
+    Br81_n_p_Se81_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_90deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)
+    Br81_n_p_Se81_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_135deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)
+
+    Br81_n_p_Se81_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_45deg[Br81_n_p_Se81_gs_45deg_valid], 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
+    Br81_n_p_Se81_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_90deg[Br81_n_p_Se81_gs_90deg_valid], 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
+    Br81_n_p_Se81_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_135deg[Br81_n_p_Se81_gs_135deg_valid], 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6130)$ to $^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $\\theta_p=0\\,$deg")
+    ax.set_ylabel("$E_{p}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br81_n_p_Se81_gs_45deg_valid], Br81_n_p_Se81_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br81_n_p_Se81_gs_90deg_valid], Br81_n_p_Se81_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br81_n_p_Se81_gs_135deg_valid], Br81_n_p_Se81_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_6130_Br81_n_p_Se81.png", bbox_inches="tight", dpi=400)
+
+    Br79_n_a_As76_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_45deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)
+    Br79_n_a_As76_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_90deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)
+    Br79_n_a_As76_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_135deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)
+
+    Br79_n_a_As76_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_45deg[Br79_n_a_As76_gs_45deg_valid], 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+    Br79_n_a_As76_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_90deg[Br79_n_a_As76_gs_90deg_valid], 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+    Br79_n_a_As76_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_135deg[Br79_n_a_As76_gs_135deg_valid], 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6130)$ to $^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
+    ax.set_ylabel("$E_{\\alpha}$ [keV]")
+    ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br79_n_a_As76_gs_45deg_valid], Br79_n_a_As76_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br79_n_a_As76_gs_90deg_valid], Br79_n_a_As76_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br79_n_a_As76_gs_135deg_valid], Br79_n_a_As76_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_6130_Br79_n_a_As76.png", bbox_inches="tight", dpi=400)
+
+    Br81_n_a_As78_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_45deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)
+    Br81_n_a_As78_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_90deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)
+    Br81_n_a_As78_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6130_135deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)
+
+    Br81_n_a_As78_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_45deg[Br81_n_a_As78_gs_45deg_valid], 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_90deg[Br81_n_a_As78_gs_90deg_valid], 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6130_135deg[Br81_n_a_As78_gs_135deg_valid], 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6130)$ to $^{81}$Br$(n,\\alpha)^{81}$Se$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
+    ax.set_ylabel("$E_{\\alpha}$ [keV]")
+    ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br81_n_a_As78_gs_45deg_valid], Br81_n_a_As78_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br81_n_a_As78_gs_90deg_valid], Br81_n_a_As78_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br81_n_a_As78_gs_135deg_valid], Br81_n_a_As78_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend() 
+
+    fig.savefig("figs/C13_a_n_O16_6130_Br81_n_a_As78.png", bbox_inches="tight", dpi=400)
+
+
+    ################
+    ################
+    # C13_a_n_O16_6917
+
+    C13_a_n_O16_6917_45deg_valid: list[bool] = has_enough_energy(lab_energy, 45, He4_mass, C13_mass, neutron_mass, O16_mass, 6917)
+    C13_a_n_O16_6917_90deg_valid: list[bool] = has_enough_energy(lab_energy, 90, He4_mass, C13_mass, neutron_mass, O16_mass, 6917)
+    C13_a_n_O16_6917_135deg_valid: list[bool] = has_enough_energy(lab_energy, 135, He4_mass, C13_mass, neutron_mass, O16_mass, 6917)
+
+    C13_a_n_O16_6917_45deg: NDArray[np.float64] = eject_lab_energy(lab_energy[C13_a_n_O16_6917_45deg_valid], 45, He4_mass, C13_mass, neutron_mass, O16_mass, 6917)[0]
+    C13_a_n_O16_6917_90deg: NDArray[np.float64] = eject_lab_energy(lab_energy[C13_a_n_O16_6917_90deg_valid], 90, He4_mass, C13_mass, neutron_mass, O16_mass, 6917)[0]
+    C13_a_n_O16_6917_135deg: NDArray[np.float64] = eject_lab_energy(lab_energy[C13_a_n_O16_6917_135deg_valid], 135, He4_mass, C13_mass, neutron_mass, O16_mass, 6917)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6917)$")
+    ax.set_ylabel("$E_{n}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6917_45deg_valid], C13_a_n_O16_6917_45deg, linestyle="-", color="black", label="$\\theta_\\mathrm{LAB}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_90deg_valid], C13_a_n_O16_6917_90deg, linestyle="--", color="red", label="$\\theta_\\mathrm{LAB}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_135deg_valid], C13_a_n_O16_6917_135deg, linestyle="-.", color="blue", label="$\\theta_\\mathrm{LAB}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_g_O16_6917.png", bbox_inches="tight", dpi=400)
+
+    Br79_n_p_Se79_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_45deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)
+    Br79_n_p_Se79_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_90deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)
+    Br79_n_p_Se79_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_135deg, 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)
+
+    Br79_n_p_Se79_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_45deg[Br79_n_p_Se79_gs_45deg_valid], 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
+    Br79_n_p_Se79_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_90deg[Br79_n_p_Se79_gs_90deg_valid], 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
+    Br79_n_p_Se79_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_135deg[Br79_n_p_Se79_gs_135deg_valid], 0, neutron_mass, Br79_mass, H1_mass, Se79_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6917)$ to $^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $\\theta_p=0\\,$deg")
+    ax.set_ylabel("$E_{p}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br79_n_p_Se79_gs_45deg_valid], Br79_n_p_Se79_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br79_n_p_Se79_gs_90deg_valid], Br79_n_p_Se79_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br79_n_p_Se79_gs_135deg_valid], Br79_n_p_Se79_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_6917_Br79_n_p_Se79.png", bbox_inches="tight", dpi=400)
+
+    Br81_n_p_Se81_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_45deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)
+    Br81_n_p_Se81_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_90deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)
+    Br81_n_p_Se81_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_135deg, 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)
+
+    Br81_n_p_Se81_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_45deg[Br81_n_p_Se81_gs_45deg_valid], 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
+    Br81_n_p_Se81_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_90deg[Br81_n_p_Se81_gs_90deg_valid], 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
+    Br81_n_p_Se81_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_135deg[Br81_n_p_Se81_gs_135deg_valid], 0, neutron_mass, Br81_mass, H1_mass, Se81_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6917)$ to $^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $\\theta_p=0\\,$deg")
+    ax.set_ylabel("$E_{p}$ [keV]")
+    ax.set_xlabel("$E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br81_n_p_Se81_gs_45deg_valid], Br81_n_p_Se81_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br81_n_p_Se81_gs_90deg_valid], Br81_n_p_Se81_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br81_n_p_Se81_gs_135deg_valid], Br81_n_p_Se81_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_6917_Br81_n_p_Se81.png", bbox_inches="tight", dpi=400)
+
+    Br79_n_a_As76_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_45deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)
+    Br79_n_a_As76_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_90deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)
+    Br79_n_a_As76_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_135deg, 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)
+
+    Br79_n_a_As76_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_45deg[Br79_n_a_As76_gs_45deg_valid], 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+    Br79_n_a_As76_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_90deg[Br79_n_a_As76_gs_90deg_valid], 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+    Br79_n_a_As76_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_135deg[Br79_n_a_As76_gs_135deg_valid], 0, neutron_mass, Br79_mass, He4_mass, As76_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6917)$ to $^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
+    ax.set_ylabel("$E_{\\alpha}$ [keV]")
+    ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br79_n_a_As76_gs_45deg_valid], Br79_n_a_As76_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br79_n_a_As76_gs_90deg_valid], Br79_n_a_As76_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br79_n_a_As76_gs_135deg_valid], Br79_n_a_As76_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend()
+
+    fig.savefig("figs/C13_a_n_O16_6917_Br79_n_a_As76.png", bbox_inches="tight", dpi=400)
+
+    Br81_n_a_As78_gs_45deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_45deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)
+    Br81_n_a_As78_gs_90deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_90deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)
+    Br81_n_a_As78_gs_135deg_valid: list[bool] = has_enough_energy(C13_a_n_O16_6917_135deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)
+
+    Br81_n_a_As78_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_45deg[Br81_n_a_As78_gs_45deg_valid], 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_90deg[Br81_n_a_As78_gs_90deg_valid], 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_6917_135deg[Br81_n_a_As78_gs_135deg_valid], 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+
+    fig, ax = plt.subplots(1, 1, figsize=(9,7))
+    ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(6917)$ to $^{81}$Br$(n,\\alpha)^{81}$Se$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
+    ax.set_ylabel("$E_{\\alpha}$ [keV]")
+    ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
+    ax.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br81_n_a_As78_gs_45deg_valid], Br81_n_a_As78_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br81_n_a_As78_gs_90deg_valid], Br81_n_a_As78_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br81_n_a_As78_gs_135deg_valid], Br81_n_a_As78_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.legend() 
+
+    fig.savefig("figs/C13_a_n_O16_6917_Br81_n_a_As78.png", bbox_inches="tight", dpi=400)
 
     return
 
