@@ -97,10 +97,10 @@ def main():
 
     plt.rc("font", family=["Helvetica", "Arial"])
     plt.rc("text", usetex=True)
-    plt.rc("axes", labelsize=18, titlesize=18)
-    plt.rc("xtick", labelsize=18, top=True, direction="in")
-    plt.rc("ytick", labelsize=18, right=True, direction="in")
-    plt.rc("legend", fontsize=18)
+    plt.rc("axes", labelsize=14, titlesize=14)
+    plt.rc("xtick", labelsize=14, top=True, direction="in")
+    plt.rc("ytick", labelsize=14, right=True, direction="in")
+    plt.rc("legend", fontsize=14)
 
     fig, ax = plt.subplots(1, 1, figsize=(9,7))
     ax.set_title("$^{12}$C$(\\alpha,\\gamma)^{16}$O (labels for final state)")
@@ -113,6 +113,33 @@ def main():
     ax.legend()
 
     fig.savefig("figs/C12_a_g_O16.png", bbox_inches="tight", dpi=400)
+
+    fig_45deg, ax_45deg = plt.subplots(1, 1, figsize=(9,7))
+    ax_45deg.set_title("$\\gamma$ energy and neutron induced ejectile energy from ${13}$C$(\\alpha,n)^{16}$O at 45 degree detector angle")
+    ax_45deg.set_ylabel("$\\gamma$ or ejectile energy [keV]")
+    ax_45deg.set_xlabel("Incoming $E_\\alpha$ [keV]")
+    ax_45deg.plot(lab_energy, C12_a_g_O16_gs, linestyle="-", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(\\mathrm{g.s.})$")
+    ax_45deg.plot(lab_energy, C12_a_g_O16_6130, linestyle="--", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(6130)$")
+    ax_45deg.plot(lab_energy, C12_a_g_O16_6917, linestyle="-.", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(6917)$")
+    ax_45deg.plot(lab_energy, C12_a_g_O16_7117, linestyle=":", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(7117)$")
+
+    fig_90deg, ax_90deg = plt.subplots(1, 1, figsize=(9,7))
+    ax_90deg.set_title("$\\gamma$ energy and neutron induced ejectile energy from ${13}$C$(\\alpha,n)^{16}$O at 90 degree detector angle")
+    ax_90deg.set_ylabel("$\\gamma$ or ejectile energy [keV]")
+    ax_90deg.set_xlabel("Incoming $E_\\alpha$ [keV]")
+    ax_90deg.plot(lab_energy, C12_a_g_O16_gs, linestyle="-", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(\\mathrm{g.s.})$")
+    ax_90deg.plot(lab_energy, C12_a_g_O16_6130, linestyle="--", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(6130)$")
+    ax_90deg.plot(lab_energy, C12_a_g_O16_6917, linestyle="-.", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(6917)$")
+    ax_90deg.plot(lab_energy, C12_a_g_O16_7117, linestyle=":", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(7117)$")
+
+    fig_135deg, ax_135deg = plt.subplots(1, 1, figsize=(9,7))
+    ax_135deg.set_title("$\\gamma$ energy and neutron induced ejectile energy from ${13}$C$(\\alpha,n)^{16}$O at 135 degree detector angle")
+    ax_135deg.set_ylabel("$\\gamma$ or ejectile energy [keV]")
+    ax_135deg.set_xlabel("Incoming $E_\\alpha$ [keV]")
+    ax_135deg.plot(lab_energy, C12_a_g_O16_gs, linestyle="-", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(\\mathrm{g.s.})$")
+    ax_135deg.plot(lab_energy, C12_a_g_O16_6130, linestyle="--", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(6130)$")
+    ax_135deg.plot(lab_energy, C12_a_g_O16_6917, linestyle="-.", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(6917)$")
+    ax_135deg.plot(lab_energy, C12_a_g_O16_7117, linestyle=":", color="red", label="$^{12}$C$(\\alpha,\\gamma)^{16}$O$(7117)$")
 
     ################
     ################
@@ -179,21 +206,35 @@ def main():
 
     fig.savefig("figs/C13_a_n_O16_gs_Br79_n_a_As76.png", bbox_inches="tight", dpi=400)
 
-    Br81_n_p_As78_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_45deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
-    Br81_n_p_As78_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_90deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
-    Br81_n_p_As78_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_135deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_45deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_45deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_90deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_90deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
+    Br81_n_a_As78_gs_135deg: NDArray[np.float64] = eject_lab_energy(C13_a_n_O16_gs_135deg, 0, neutron_mass, Br81_mass, He4_mass, As78_mass, 0)[0]
 
     fig, ax = plt.subplots(1, 1, figsize=(9,7))
     ax.set_title("$^{13}$C$(\\alpha,n)^{16}$O$(\\mathrm{g.s.})$ to $^{81}$Br$(n,a)^{78}$As$(\\mathrm{g.s.})$ $\\theta_\\alpha=0\\,$deg")
     ax.set_ylabel("$E_{\\alpha}$ [keV]")
     ax.set_xlabel("Incoming $E_{\\alpha}$ [keV]")
-    ax.plot(lab_energy, Br81_n_p_As78_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
-    ax.plot(lab_energy, Br81_n_p_As78_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
-    ax.plot(lab_energy, Br81_n_p_As78_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
+    ax.plot(lab_energy, Br81_n_a_As78_gs_45deg, linestyle="-", color="black", label="$\\theta_{n,\\mathrm{LAB}}=45\\,$deg")
+    ax.plot(lab_energy, Br81_n_a_As78_gs_90deg, linestyle="--", color="red", label="$\\theta_{n,\\mathrm{LAB}}=90\\,$deg")
+    ax.plot(lab_energy, Br81_n_a_As78_gs_135deg, linestyle="-.", color="blue", label="$\\theta_{n,\\mathrm{LAB}}=135\\,$deg")
     ax.legend()
 
-    fig.savefig("figs/C13_a_n_O16_gs_Br81_n_p_As78.png", bbox_inches="tight", dpi=400)    
+    fig.savefig("figs/C13_a_n_O16_gs_Br81_n_a_As78.png", bbox_inches="tight", dpi=400)
 
+    ax_45deg.plot(lab_energy, Br79_n_p_Se79_gs_45deg, linestyle="-", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_45deg.plot(lab_energy, Br81_n_p_Se81_gs_45deg, linestyle="-", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_45deg.plot(lab_energy, Br79_n_a_As76_gs_45deg, linestyle="-", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_45deg.plot(lab_energy, Br81_n_a_As78_gs_45deg, linestyle="-", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+
+    ax_90deg.plot(lab_energy, Br79_n_p_Se79_gs_90deg, linestyle="-", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_90deg.plot(lab_energy, Br81_n_p_Se81_gs_90deg, linestyle="-", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_90deg.plot(lab_energy, Br79_n_a_As76_gs_90deg, linestyle="-", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_90deg.plot(lab_energy, Br81_n_a_As78_gs_90deg, linestyle="-", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+
+    ax_135deg.plot(lab_energy, Br79_n_p_Se79_gs_135deg, linestyle="-", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_135deg.plot(lab_energy, Br81_n_p_Se81_gs_135deg, linestyle="-", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_135deg.plot(lab_energy, Br79_n_a_As76_gs_135deg, linestyle="-", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
+    ax_135deg.plot(lab_energy, Br81_n_a_As78_gs_135deg, linestyle="-", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(\\mathrm{g.s.})$")
 
     ################
     ################
@@ -294,6 +335,22 @@ def main():
 
     fig.savefig("figs/C13_a_n_O16_6130_Br81_n_a_As78.png", bbox_inches="tight", dpi=400)
 
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br79_n_p_Se79_gs_45deg_valid], Br79_n_p_Se79_gs_45deg, linestyle="--", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br81_n_p_Se81_gs_45deg_valid], Br81_n_p_Se81_gs_45deg, linestyle="--", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br79_n_a_As76_gs_45deg_valid], Br79_n_a_As76_gs_45deg, linestyle="--", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6130_45deg_valid][Br81_n_a_As78_gs_45deg_valid], Br81_n_a_As78_gs_45deg, linestyle="--", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br79_n_p_Se79_gs_90deg_valid], Br79_n_p_Se79_gs_90deg, linestyle="--", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br81_n_p_Se81_gs_90deg_valid], Br81_n_p_Se81_gs_90deg, linestyle="--", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br79_n_a_As76_gs_90deg_valid], Br79_n_a_As76_gs_90deg, linestyle="--", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6130_90deg_valid][Br81_n_a_As78_gs_90deg_valid], Br81_n_a_As78_gs_90deg, linestyle="--", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br79_n_p_Se79_gs_135deg_valid], Br79_n_p_Se79_gs_135deg, linestyle="--", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br81_n_p_Se81_gs_135deg_valid], Br81_n_p_Se81_gs_135deg, linestyle="--", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br79_n_a_As76_gs_135deg_valid], Br79_n_a_As76_gs_135deg, linestyle="--", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6130_135deg_valid][Br81_n_a_As78_gs_135deg_valid], Br81_n_a_As78_gs_135deg, linestyle="--", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(6130)$")
+
+
 
     ################
     ################
@@ -393,6 +450,29 @@ def main():
     ax.legend() 
 
     fig.savefig("figs/C13_a_n_O16_6917_Br81_n_a_As78.png", bbox_inches="tight", dpi=400)
+
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br79_n_p_Se79_gs_45deg_valid], Br79_n_p_Se79_gs_45deg, linestyle="-.", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br81_n_p_Se81_gs_45deg_valid], Br81_n_p_Se81_gs_45deg, linestyle="-.", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br79_n_a_As76_gs_45deg_valid], Br79_n_a_As76_gs_45deg, linestyle="-.", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_45deg.plot(lab_energy[C13_a_n_O16_6917_45deg_valid][Br81_n_a_As78_gs_45deg_valid], Br81_n_a_As78_gs_45deg, linestyle="-.", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br79_n_p_Se79_gs_90deg_valid], Br79_n_p_Se79_gs_90deg, linestyle="-.", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br81_n_p_Se81_gs_90deg_valid], Br81_n_p_Se81_gs_90deg, linestyle="-.", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br79_n_a_As76_gs_90deg_valid], Br79_n_a_As76_gs_90deg, linestyle="-.", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_90deg.plot(lab_energy[C13_a_n_O16_6917_90deg_valid][Br81_n_a_As78_gs_90deg_valid], Br81_n_a_As78_gs_90deg, linestyle="-.", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br79_n_p_Se79_gs_135deg_valid], Br79_n_p_Se79_gs_135deg, linestyle="-.", color="black", label="$^{79}$Br$(n,p)^{79}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br81_n_p_Se81_gs_135deg_valid], Br81_n_p_Se81_gs_135deg, linestyle="-.", color="blue", label="$^{81}$Br$(n,p)^{81}$Se$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br79_n_a_As76_gs_135deg_valid], Br79_n_a_As76_gs_135deg, linestyle="-.", color="green", label="$^{79}$Br$(n,\\alpha)^{76}$As$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+    ax_135deg.plot(lab_energy[C13_a_n_O16_6917_135deg_valid][Br81_n_a_As78_gs_135deg_valid], Br81_n_a_As78_gs_135deg, linestyle="-.", color="cyan", label="$^{81}$Br$(n,\\alpha)^{78}$As$(\\mathrm{g.s.})$ $^{16}$O$(6917)$")
+
+    ax_45deg.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+    ax_90deg.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+    ax_135deg.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+
+    fig_45deg.savefig("figs/peaks_45deg.png", bbox_inches="tight", dpi=400)
+    fig_90deg.savefig("figs/peaks_90deg.png", bbox_inches="tight", dpi=400)
+    fig_135deg.savefig("figs/peaks_135deg.png", bbox_inches="tight", dpi=400)
 
     return
 
